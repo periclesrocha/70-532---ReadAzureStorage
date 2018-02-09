@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,12 @@ namespace ReadAzureStorage
 
         static void fazAPorraToda()
         {
+            string sStorageAccountName = ConfigurationManager.AppSettings["StorageAccountName"];
+            string sStorageAccountKey = ConfigurationManager.AppSettings["StorageAccountKey"];
+            string sFile = ConfigurationManager.AppSettings["FileToUpload"];
+
             CloudStorageAccount storageAccount;
-            storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=peri70532storage;AccountKey=Tpe5/9h8T2LueYhg2J7Rt0MvmSo1Us7mefwAWHagg4KAefDOkBPH4e2s086gri+i3UYh7kCwq+OOAMFEIAtFAg==;EndpointSuffix=core.windows.net");
+            storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName="+ sStorageAccountName + ";AccountKey="+ sStorageAccountKey);
 
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference("democontainerblockblob");
@@ -35,9 +40,9 @@ namespace ReadAzureStorage
                 throw;
             }
 
-            const string imageToUpload = @"C:\Users\procha\Desktop\untitled.png";
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference("untitled.png");
-            using (var fileStream = System.IO.File.OpenRead(imageToUpload))
+            string fileToUpload = @sFile;
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference("MyFile.txt");
+            using (var fileStream = System.IO.File.OpenRead(fileToUpload))
             {
                 blockBlob.UploadFromStream(fileStream);
             }
